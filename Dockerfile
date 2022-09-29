@@ -30,6 +30,7 @@ RUN apt-get update -y -qq && apt-get install -y -qq \
         openjdk-11-jre \
         gfortran \
       && ln -s /usr/bin/python3 /usr/bin/python \
+      && pip3 install Bio \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
