@@ -6,7 +6,6 @@ from pathlib import Path
 from bin.get_IS_info import *
 
 class TestGetISInfo(unittest.TestCase):
-    TEST_FFQ_JSON_LOC = 'tests/data/input'
     TEST_TAB_FILE = 'tests/data/input/test_insertion_sequence_annotations.tab'
     TEST_AA_FASTA = 'tests/data/input/test_insertion_sequences.faa'
     TEST_INTERPROSCAN_OUT = 'tests/data/input/test_insertion_sequences.faa.tsv'
@@ -37,7 +36,7 @@ class TestGetISInfo(unittest.TestCase):
         actual = "".join(tab.readlines())
         os.remove(tab_name)
         self.maxDiff = None
-        self.assertEqual(actual, """IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\titr_cluster\tinterpro_or_panther_accession\nIS_length_655_Transposase_IS200_like_148-565_Transposase_IS200_like_superfamily_124-580_REP_ASSOCIATED_TYROSINE_TRANSPOSASE_133-625\tSRS013170\tNODE_18_length_76504_cov_9.77495\t74408\t74436\t75032\t75062\t115105\tIPR002686;IPR036515;PTHR36966\nIS_length_1455_Integrase_like_catalytic_domain_superfamily_1393-1918\tSRS013170\tNODE_31_length_64375_cov_7.58579\t10034\t10063\t11459\t11488\t2614\tIPR013762\n""")
+        self.assertEqual(actual, """IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\tinterpro_or_panther_accession\nIS_length_655_Transposase_IS200_like_148-565_Transposase_IS200_like_superfamily_124-580_REP_ASSOCIATED_TYROSINE_TRANSPOSASE_133-625\tSRS013170\tNODE_18_length_76504_cov_9.77495\t74408\t74436\t75032\t75062\tIPR002686;IPR036515;PTHR36966\nIS_length_1455_Integrase_like_catalytic_domain_superfamily_1393-1918\tSRS013170\tNODE_31_length_64375_cov_7.58579\t10034\t10063\t11459\t11488\tIPR013762\n""")
 
         self.assertEqual(output, {'IS_cluster_115105_length_655': 'IS_length_655_Transposase_IS200_like_148-565_Transposase_IS200_like_superfamily_124-580_REP_ASSOCIATED_TYROSINE_TRANSPOSASE_133-625', 'IS_cluster_2614_length_1455': 'IS_length_1455_Integrase_like_catalytic_domain_superfamily_1393-1918'})
 
@@ -48,13 +47,13 @@ class TestGetISInfo(unittest.TestCase):
 
     def test_arguments(self):
         actual = get_arguments().parse_args(
-            ['--tab_file', 'tab_file', '--ffq_json', 'ffq_json', '--aa_fasta', 'aa_fasta',
+            ['--tab_file', 'tab_file', '--aa_fasta', 'aa_fasta',
             '--interproscan_out', 'interproscan_out',
             '--fasta_file', 'fasta_file',
             '--output_prefix', 'output_prefix'])
         self.assertEqual(actual, argparse.Namespace(tab_file='tab_file',
         aa_fasta='aa_fasta', interproscan_out='interproscan_out',
-        ffq_json='ffq_json', fasta_file='fasta_file',
+        fasta_file='fasta_file',
         output_prefix='output_prefix'))
 
     @patch('bin.get_IS_info.get_prodigal_info')
@@ -64,7 +63,7 @@ class TestGetISInfo(unittest.TestCase):
     def test_main(self, mock_write_fasta_file, mock_write_info, mock_get_interproscan_info, mock_get_prodigal_info):
         args = get_arguments().parse_args(
             ['--tab_file', 'tab_file',
-            '--ffq_json', 'ffq_json', '--aa_fasta', 'aa_fasta',
+            '--aa_fasta', 'aa_fasta',
             '--interproscan_out', 'interproscan_out',
             '--fasta_file', 'fasta_file',
             '--output_prefix', 'output_prefix'])

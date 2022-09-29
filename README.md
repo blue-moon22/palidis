@@ -106,21 +106,19 @@ There are two output files stored in a directory specified with `--batch_name`:
 
 **2. Information for each insertions sequence**
 
-e.g. (includes information from optional COB index search)
-
-IS_name | sample_id | contig | itr1_start_position | itr1_end_position | itr2_start_position | itr2_end_position | itr_cluster
-:---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---:
-IS_name1 | sample_id1 | contig_name1 | 29 | 53 | 1004 | 1028 | 12 |
-IS_name2 | sample_id1 | contig_name2 | 23 | 53 | 2769 | 2832 | 65 |
+IS_name | sample_id | contig | itr1_start_position | itr1_end_position | itr2_start_position | itr2_end_position | interpro_or_panther_accession
+:---: | :---: | :---: | :---: | :---: | :---: | :---: | :---:
+IS_length_655_Transposase_IS200_like_148-565 | sample_id1 | contig_name1 | 29 | 53 | 1004 | 1028 | IPR001207
+IS_length_2898_Transposase_IS200_like_567-984_Transposase_IS200_like_superfamily_1276-1732 | sample_id1 | contig_name2 | 23 | 53 | 2769 | 2832 | IPR001207;PTHR33217
 
 ### Interpretation
 Header | Description
 :--- | :---
-**IS_name** | Name assigned by PaliDIS which contains the ITR cluster (see below) and length e.g. `IS_cluster_0_length_1072`
+**IS_name** | Name assigned by PaliDIS which contains the length, transposase(s) and transposases' positions e.g. `IS_length_655_Transposase_IS200_like_148-565` is nucleotide length 655 and contains a IS200-like transposase in position 148 to 565)
 **sample_id** | Sample ID that was given in manifest
 **contig** | Name of the contig that was given by the header in the contig file provided by the manifest
 **itr1_start_position** | The position of the first nucleotide of the left-hand Inverted Terminal Repeat (ITR) sequence
 **itr1_end_position** | The position of the last nucleotide of the left-hand ITR sequence
 **itr2_start_position** | The position of the first nucleotide of the right-hand ITR sequence
 **itr2_end_position** | The position of the last nucleotide of the right-hand ITR sequence
-**itr_cluster** | The ITR cluster that was assigned to both ITRs (in Step 5)
+**interpro_or_panther_accession** | The accession number of the InterPro or PANTHER transposases (separated by `;` and in corresponding order as the transposases in IS_name)

@@ -19,7 +19,7 @@ def write_info(tab_file, prodigal_info, interpro_info, output_prefix):
 
     is_name_dict = {}
     with open(f'{output_prefix}_insertion_sequences_info.txt', "w") as out:
-        out.write("IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\titr_cluster\tinterpro_or_panther_accession\n")
+        out.write("IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\tinterpro_or_panther_accession\n")
         with open(tab_file, "r") as file:
             next(file)
             for line in file:
@@ -49,7 +49,7 @@ def write_info(tab_file, prodigal_info, interpro_info, output_prefix):
                     if flag:
                         out.write(f'{new_is_name}\t')
                         is_name_dict[is_name] = new_is_name
-                        out.write('\t'.join(line.replace('\n', '').split('\t')[1:]) + '\t' + ';'.join(accessions) + '\n')
+                        out.write('\t'.join(line.replace('\n', '').split('\t')[1:-1]) + '\t' + ';'.join(accessions) + '\n')
 
     return is_name_dict
 
@@ -123,8 +123,6 @@ def get_arguments():
     parser = argparse.ArgumentParser(description='Get tab file of annotations.')
     parser.add_argument('--tab_file', '-t', dest='tab_file', required=True,
                         help='Input "insertion_sequence_annotations.tab" file.', type = str)
-    parser.add_argument('--ffq_json', '-j', dest='ffq_json', required=False,
-                        help='Location of JSON files.', type = str)
     parser.add_argument('--aa_fasta', '-p', dest='aa_fasta', required=True,
                         help='Input "_insertion_sequences.faa file."', type = str)
     parser.add_argument('--interproscan_out', '-i', dest='interproscan_out', required=True,
