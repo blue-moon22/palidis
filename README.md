@@ -34,8 +34,7 @@ For each sample, the pipeline produces two output files: **1. FASTA file of inse
 4. Get candidate ITRs by distance filters [`getCandidateITRs`]
 5. Cluster candidate ITRs using CD-HIT-EST [`clusterReads`]
 6. Get putative ITRs by cluster concordance and output Insertion Sequences [`getITRs`]
-7. _Optional:_ Search against a COB index to predict IS origin [`searchCOBSIndex`]
-8. Combine optional COB index search results [`getISInfoWithCOBS` `getISInfoWithoutCOBS`]
+7. Get insertion sequences [`runProdigal`, `installInterproscan`, `runInterproscan`, `getISInfo`]
 
 <a name="installation"></a>
 ## Installation
@@ -55,20 +54,8 @@ git submodule update --init --recursive
 <a name="usage"></a>
 ## Usage
 
-### Without COBS Index Search
 ```bash
 nextflow palidis.nf --manifest <manifest_file> --batch_name <batch_name> -c configs/conf/<name_of_config>.config
-```
-
-### With COBS Index Search
-Download a COBS index database of all genomes. This is a very large file of just under 1 Terabyte so you will need a good internet connection and storage.
-```
-wget http://ftp.ebi.ac.uk/pub/databases/ENA2018-bacteria-661k/661k.cobs_compact
-```
-
-Run command with `--cobs_index` option
-```bash
-nextflow palidis.nf --manifest <manifest_file> --batch_name <batch_name> --cobs_index 661k.cobs_compact -c configs/conf/<name_of_config>.config
 ```
 
 ### Mandatory arguments
@@ -102,8 +89,6 @@ This represents the institution or HPC name. You can find your institutional HPC
   --cd_hit_aL         -aL option for CD-HIT-EST. (Default: 0.0)
   --cd_hit_aS         -aS option for CD-HIT-EST. (Default: 0.9)
   --cd_hit_c          -c option for CD-HIT-EST. (Default: 0.9)
-  --cobs_index        Location of COBS index file for optional COBS index search of predicted IS origin. (Default: "")
-  --cobs_threshold    K-mer threshold for identifying sequences in COBS index. (Default: 1)
   -resume             Resume the pipeline
 ```
 
@@ -123,10 +108,10 @@ There are two output files stored in a directory specified with `--batch_name`:
 
 e.g. (includes information from optional COB index search)
 
-IS_name | sample_id | contig | itr1_start_position | itr1_end_position | itr2_start_position | itr2_end_position | itr_cluster | COBS_index_biosample_id | COBS_index_origin
-:---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---:
-IS_name1 | sample_id1 | contig_name1 | 29 | 53 | 1004 | 1028 | 12 | SAMN00627906 | Bacteroides vulgatus CL09T03C04 |
-IS_name2 | sample_id1 | contig_name2 | 23 | 53 | 2769 | 2832 | 65 | | |
+IS_name | sample_id | contig | itr1_start_position | itr1_end_position | itr2_start_position | itr2_end_position | itr_cluster
+:---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---:
+IS_name1 | sample_id1 | contig_name1 | 29 | 53 | 1004 | 1028 | 12 |
+IS_name2 | sample_id1 | contig_name2 | 23 | 53 | 2769 | 2832 | 65 |
 
 ### Interpretation
 Header | Description
@@ -139,5 +124,3 @@ Header | Description
 **itr2_start_position** | The position of the first nucleotide of the right-hand ITR sequence
 **itr2_end_position** | The position of the last nucleotide of the right-hand ITR sequence
 **itr_cluster** | The ITR cluster that was assigned to both ITRs (in Step 5)
-**COBS_index_biosample_id** | The NCBI Biosample ID of a sequenced sample in the COBS index
-**COBS_index_origin** | The taxonomy of the sequenced sample in the COBS index
