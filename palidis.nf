@@ -100,8 +100,12 @@ workflow palidis {
         }
     }
 
+    Channel
+    .fromPath(interproscan_path, checkIfExists: true)
+    .set { interproscan_ch }
+
     runProdigal.out
-    .combine(interproscan_path)
+    .combine(interproscan_ch)
     .set { proteins_ch }
 
     runInterproscan(proteins_ch)

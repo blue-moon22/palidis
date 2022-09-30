@@ -13,7 +13,7 @@ process runInterproscan {
     """
     # Remove * from protein prediction
     sed -i 's/*//' ${faa}
-    
+
     ./${db}/interproscan.sh -i ${faa} -f tsv -dp -cpu ${task.cpus}
     """
 }
