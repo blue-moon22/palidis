@@ -85,10 +85,23 @@ workflow palidis {
     getITRs(into_get_itr_ch)
 
     runProdigal(getITRs.out.is_fasta_for_prodigal_ch)
-    installInterproscan()
+
+    interproscan_path = file("${params.db_path}/${params.interproscan_db}")
+
+    if (!interproscan_path.exists()) {
+        installInterproscan()
+
+        db_path = file("${params.db_path}")
+        db_path.mkdir()
+
+        installInterproscan.out
+        .subscribe { it ->
+            it.moveTo("${db_path}")
+        }
+    }
 
     runProdigal.out
-    .combine(installInterproscan.out)
+    .combine(interproscan_path)
     .set { proteins_ch }
 
     runInterproscan(proteins_ch)
