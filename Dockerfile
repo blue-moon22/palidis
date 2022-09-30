@@ -86,3 +86,14 @@ ARG PRODIGAL_VERSION=v2.6.3
 RUN git clone -b ${PRODIGAL_VERSION} https://github.com/hyattpd/Prodigal.git \
   && cd Prodigal \
   && make install
+
+# Install pfsearch
+ARG PFTOOLS_VERSION=v3.2.11
+RUN git clone -b ${PFTOOLS_VERSION} https://github.com/sib-swiss/pftools3.git \
+  && cd pftools3 \
+  && mkdir build \
+  && cd build \
+  && cmake .. \
+  && make \
+  && make install \
+  && make test
