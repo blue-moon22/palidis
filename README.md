@@ -106,19 +106,19 @@ There are two output files stored in a directory specified with `--batch_name`:
 
 **2. Information for each insertions sequence**
 
-IS_name | sample_id | contig | itr1_start_position | itr1_end_position | itr2_start_position | itr2_end_position | interpro_or_panther_accession
+IS_name | sample_id | contig | itr1_start_position | itr1_end_position | itr2_start_position | itr2_end_position | description
 :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---:
-IS_length_655_Transposase_IS200_like_148-565 | sample_id1 | contig_name1 | 29 | 53 | 1004 | 1028 | IPR001207
-IS_length_2898_Transposase_IS200_like_567-984_Transposase_IS200_like_superfamily_1276-1732 | sample_id1 | contig_name2 | 23 | 53 | 2769 | 2832 | IPR001207;PTHR33217
+IS_length_655-IPR002686_154_418-IPR002686_148_565-IPR036515_124_667-IPR036515_124_580-PTHR36966_133_625 | SRS013170 | NODE_18_length_76504_cov_9.77495 | 74408 | 74436 | 75032 | 75062 | IPR002686:Transposase IS200-like;IPR036515:Transposase IS200-like superfamily;PTHR36966:REP-ASSOCIATED TYROSINE TRANSPOSASE
+IS_length_1455-IPR013762_1393_1918 | SRS013170 | NODE_31_length_64375_cov_7.58579 | 10034 | 10063 | 11459 | 11488 | IPR013762:Integrase-like, catalytic domain superfamily
 
 ### Interpretation
 Header | Description
 :--- | :---
-**IS_name** | Name assigned by PaliDIS which contains the length, transposase(s) and transposases' positions e.g. `IS_length_655_Transposase_IS200_like_148-565` is nucleotide length 655 and contains a IS200-like transposase in position 148 to 565)
+**IS_name** | Name assigned by PaliDIS which contains the length, interpro or PANTHER accessions of transposases and their positions, e.g. `IS_length_655-IPR002686_154_418-IPR002686_148_565-IPR036515_124_667-IPR036515_124_580-PTHR36966_133_625` represents an IS of nucleotide length 655 with transposases detected including Interpro accession IPR002686 in positions 154-418 and 148-565, Interpro accession IPR036515 in position 124-667 and PANTHER accession PTHR36966 in position 133-625)
 **sample_id** | Sample ID that was given in manifest
 **contig** | Name of the contig that was given by the header in the contig file provided by the manifest
-**itr1_start_position** | The position of the first nucleotide of the left-hand Inverted Terminal Repeat (ITR) sequence
-**itr1_end_position** | The position of the last nucleotide of the left-hand ITR sequence
-**itr2_start_position** | The position of the first nucleotide of the right-hand ITR sequence
-**itr2_end_position** | The position of the last nucleotide of the right-hand ITR sequence
-**interpro_or_panther_accession** | The accession number of the InterPro or PANTHER transposases (separated by `;` and in corresponding order as the transposases in IS_name)
+**itr1_start_position** | The position in the contig of the first nucleotide of the left-hand Inverted Terminal Repeat (ITR) sequence (also the start of the IS)
+**itr1_end_position** | The position in the contig of the last nucleotide of the left-hand ITR sequence
+**itr2_start_position** | The position in the contig of the first nucleotide of the right-hand ITR sequence
+**itr2_end_position** | The position of the last nucleotide of the right-hand ITR sequence (also the end of the IS)
+**description** | The description of each accession recorded in **IS_name**, e.g. IPR002686:Transposase IS200-like;IPR036515:Transposase IS200-like superfamily;PTHR36966:REP-ASSOCIATED TYROSINE TRANSPOSASE

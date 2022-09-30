@@ -21,9 +21,9 @@ class TestGetISInfo(unittest.TestCase):
     def test_get_interproscan_info(self):
         actual = get_interproscan_info(self.TEST_INTERPROSCAN_OUT)
 
-        self.assertEqual(actual['IS_cluster_17448_length_1504_1'], {'IPR002560': ['Transposase IS204/IS1001/IS1096/IS1165, DDE domain', (495, 693)]})
-        self.assertEqual(actual['IS_cluster_134947_length_1460_1'], {'IPR012337': ['Ribonuclease H-like superfamily', (333, 828)], 'IPR036397': ['Ribonuclease H superfamily', (345, 828)], 'PTHR35004': ['TRANSPOSASE RV3428C-RELATED', (18, 1110)]})
-        self.assertEqual(actual['IS_cluster_562609_length_2857_1'], {'IPR013762': ['Integrase-like, catalytic domain superfamily', (0, 231)]})
+        self.assertEqual(actual['IS_cluster_17448_length_1504_1'], {'IPR002560': [['Transposase IS204/IS1001/IS1096/IS1165, DDE domain', (495, 693)]]})
+        self.assertEqual(actual['IS_cluster_134947_length_1460_1'], {'IPR012337': [['Ribonuclease H-like superfamily', (333, 828)]], 'IPR036397': [['Ribonuclease H superfamily', (345, 828)]], 'PTHR35004': [['TRANSPOSASE RV3428C-RELATED', (18, 1110)]]})
+        self.assertEqual(actual['IS_cluster_562609_length_2857_1'], {'IPR013762': [['Integrase-like, catalytic domain superfamily', (0, 231)]]})
 
     def test_write_info(self):
         prodigal_info = get_prodigal_info(self.TEST_AA_FASTA)
@@ -34,16 +34,11 @@ class TestGetISInfo(unittest.TestCase):
         tab_name = self.TEST_OUTPUT_PREFIX + '_insertion_sequences_info.txt'
         tab = open(tab_name, "r")
         actual = "".join(tab.readlines())
-        os.remove(tab_name)
+        #os.remove(tab_name)
         self.maxDiff = None
-        self.assertEqual(actual, """IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\tinterpro_or_panther_accession\nIS_length_655_Transposase_IS200_like_148-565_Transposase_IS200_like_superfamily_124-580_REP_ASSOCIATED_TYROSINE_TRANSPOSASE_133-625\tSRS013170\tNODE_18_length_76504_cov_9.77495\t74408\t74436\t75032\t75062\tIPR002686;IPR036515;PTHR36966\nIS_length_1455_Integrase_like_catalytic_domain_superfamily_1393-1918\tSRS013170\tNODE_31_length_64375_cov_7.58579\t10034\t10063\t11459\t11488\tIPR013762\n""")
+        self.assertEqual(actual, """IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\tdescription\nIS_length_655-IPR002686_154_418-IPR002686_148_565-IPR036515_124_667-IPR036515_124_580-PTHR36966_133_625\tSRS013170\tNODE_18_length_76504_cov_9.77495\t74408\t74436\t75032\t75062\tIPR002686:Transposase IS200-like;IPR036515:Transposase IS200-like superfamily;PTHR36966:REP-ASSOCIATED TYROSINE TRANSPOSASE\nIS_length_1455-IPR013762_1393_1918\tSRS013170\tNODE_31_length_64375_cov_7.58579\t10034\t10063\t11459\t11488\tIPR013762:Integrase-like, catalytic domain superfamily\n""")
 
-        self.assertEqual(output, {'IS_cluster_115105_length_655': 'IS_length_655_Transposase_IS200_like_148-565_Transposase_IS200_like_superfamily_124-580_REP_ASSOCIATED_TYROSINE_TRANSPOSASE_133-625', 'IS_cluster_2614_length_1455': 'IS_length_1455_Integrase_like_catalytic_domain_superfamily_1393-1918'})
-
-    def test_write_fasta_file(self):
-
-        write_fasta_file(self.TEST_FASTA, {'IS_cluster_115105_length_655': 'IS_length_655_Transposase_IS200_like_148-565_Transposase_IS200_like_superfamily_124-580_REP_ASSOCIATED_TYROSINE_TRANSPOSASE_133-625', 'IS_cluster_2614_length_1455': 'IS_length_1455_Integrase_like_catalytic_domain_superfamily_1393-1918'}, self.TEST_OUTPUT_PREFIX)
-
+        self.assertEqual(output, {'IS_cluster_115105_length_655': 'IS_length_655-IPR002686_154_418-IPR002686_148_565-IPR036515_124_667-IPR036515_124_580-PTHR36966_133_625', 'IS_cluster_2614_length_1455': 'IS_length_1455-IPR013762_1393_1918'})
 
     def test_arguments(self):
         actual = get_arguments().parse_args(

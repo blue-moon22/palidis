@@ -19,7 +19,7 @@ def write_info(tab_file, prodigal_info, interpro_info, output_prefix):
 
     is_name_dict = {}
     with open(f'{output_prefix}_insertion_sequences_info.txt', "w") as out:
-        out.write("IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\tinterpro_or_panther_accession\n")
+        out.write("IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\tdescription\n")
         with open(tab_file, "r") as file:
             next(file)
             for line in file:
@@ -29,27 +29,28 @@ def write_info(tab_file, prodigal_info, interpro_info, output_prefix):
                 if is_name in prodigal_info:
                     flag = 0
                     proteins = prodigal_info[is_name].keys()
+                    transposases = []
                     for protein in proteins:
                         if protein in interpro_info:
-                            accessions = []
                             for acc, items in interpro_info[protein].items():
-                                length = is_name.split('_')[4]
-                                transposase = '_'.join(re.split('-| ', items[0]))
-                                transposase = ''.join(re.split('[^a-zA-Z0-9_]*', transposase))
-                                protein_start = int(prodigal_info[is_name][protein][0])
-                                start = str((protein_start - 1) + items[1][0])
-                                end = str((protein_start - 1) + items[1][1])
-                                if flag:
-                                    new_is_name += f'_{transposase}_{start}-{end}'
-                                else:
-                                    new_is_name = f'IS_length_{length}_{transposase}_{start}-{end}'
-                                    flag = 1
-                                accessions.append(acc)
+                                print(items)
+                                for item in items:
+                                    length = is_name.split('_')[4]
+                                    transposase = item[0]
+                                    protein_start = int(prodigal_info[is_name][protein][0])
+                                    start = str((protein_start - 1) + item[1][0])
+                                    end = str((protein_start - 1) + item[1][1])
+                                    if flag:
+                                        new_is_name += f'-{acc}_{start}_{end}'
+                                    else:
+                                        new_is_name = f'IS_length_{length}-{acc}_{start}_{end}'
+                                        flag = 1
+                                    transposases.append(f'{acc}:{transposase}')
 
                     if flag:
                         out.write(f'{new_is_name}\t')
                         is_name_dict[is_name] = new_is_name
-                        out.write('\t'.join(line.replace('\n', '').split('\t')[1:-1]) + '\t' + ';'.join(accessions) + '\n')
+                        out.write('\t'.join(line.replace('\n', '').split('\t')[1:-1]) + '\t' + ';'.join(sorted(list(set(transposases)))) + '\n')
 
     return is_name_dict
 
@@ -76,25 +77,33 @@ def get_interproscan_info(interproscan_out):
     interpro_dict = {}
     with open(interproscan_out) as tsv:
         for line in tsv:
-            if line.split('\t')[3] == 'PANTHER':
+
+            panther = 0
+            annotation = line.split('\t')[12].replace('\n', '')
+
+            if annotation == '-' and line.split('\t')[3] == 'PANTHER':
                 annotation = line.split('\t')[5]
-            else:
-                annotation = line.split('\t')[12].replace('\n', '')
+                panther = 1
 
             if any(x in ''.join(re.split('[^a-zA-Z0-9]*', annotation)).lower() for x in ['transposase', 'integraselike', 'ribonucleaseh']):
                 protein = line.split('\t')[0]
                 start = (int(line.split('\t')[6])-1)*3
                 end = (int(line.split('\t')[7])-1)*3
 
-                if line.split('\t')[3] == 'PANTHER':
+                if panther:
                     accession = line.split('\t')[4]
                 else:
                     accession = line.split('\t')[11]
 
                 if protein in interpro_dict:
-                    interpro_dict[protein][accession] = [annotation, (start, end)]
+                    if accession in interpro_dict[protein]:
+                        annot = interpro_dict[protein][accession]
+                        annot.append([annotation, (start, end)])
+                        interpro_dict[protein][accession] = annot
+                    else:
+                        interpro_dict[protein][accession] = [[annotation, (start, end)]]
                 else:
-                    interpro_dict[protein] = {accession: [annotation, (start, end)]}
+                    interpro_dict[protein] = {accession: [[annotation, (start, end)]]}
 
     return interpro_dict
 
