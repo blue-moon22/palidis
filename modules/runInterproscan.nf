@@ -7,7 +7,7 @@ process runInterproscan {
     tuple val(sample_id), path(faa), path(db)
 
     output:
-    tuple val(sample_id), path(faa), path("${faa}.tsv")
+    tuple val(sample_id), path(faa), path("${faa}.tsv"), optional: true
 
     script:
     """

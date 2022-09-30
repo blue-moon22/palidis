@@ -45,7 +45,9 @@ For each sample, the pipeline produces two output files: **1. FASTA file of inse
 git clone --recursive -j8 https://github.com/blue-moon22/palidis.git
 cd palidis
 ```
-If you have already cloned this repo with `git clone https://github.com/blue-moon22/palidis.git`, you also need to get the submodules:
+_Note: You may be warned to first call `git config --global --add safe.directory`._
+
+    If you have already cloned this repo with `git clone https://github.com/blue-moon22/palidis.git`, you also need to get the submodules:
 ```bash
 cd palidis
 git submodule update --init --recursive
@@ -57,6 +59,7 @@ git submodule update --init --recursive
 ```bash
 nextflow palidis.nf --manifest <manifest_file> --batch_name <batch_name> -c configs/conf/<name_of_config>.config
 ```
+**If you are running this on an LSF scheduler, also include `--lsf true`.**
 
 ### Mandatory arguments
 #### `<batch_name>`
