@@ -14,3 +14,4 @@ nf_tests
 .pytest_cache
 nextflow_test.log*
 tests/regression_test_data/output/test*
+db
