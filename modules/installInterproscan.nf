@@ -13,7 +13,6 @@ process installInterproscan {
     interproscan_link=params.interproscan_link
     tarball=params.interproscan_tarball
     interproscan_db=params.interproscan_db
-    lsf=params.lsf
 
     """
     wget ${interproscan_link}

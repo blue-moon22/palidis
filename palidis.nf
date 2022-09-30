@@ -21,8 +21,7 @@ include { getITRs } from './modules/getITRs.nf'
 include { runProdigal } from './modules/runProdigal.nf'
 include { installInterproscan } from './modules/installInterproscan.nf'
 include { runInterproscan } from './modules/runInterproscan.nf'
-include { searchCOBSIndex } from './modules/searchCOBSIndex.nf'
-include { getISInfoWithCOBS; getISInfoWithoutCOBS } from './modules/getISInfo.nf'
+include { getISInfo } from './modules/getISInfo.nf'
 
 workflow palidis {
     take:
@@ -86,46 +85,39 @@ workflow palidis {
     getITRs(into_get_itr_ch)
 
     runProdigal(getITRs.out.is_fasta_for_prodigal_ch)
-    installInterproscan()
+
+    interproscan_path = file("${params.db_path}/${params.interproscan_db}")
+
+    if (!interproscan_path.exists()) {
+        installInterproscan()
+
+        db_path = file("${params.db_path}")
+        db_path.mkdir()
+
+        installInterproscan.out
+        .subscribe { it ->
+            it.moveTo("${db_path}")
+        }
+    }
+
+    Channel
+    .fromPath(interproscan_path, checkIfExists: true)
+    .set { interproscan_ch }
 
     runProdigal.out
-    .combine(installInterproscan.out)
+    .combine(interproscan_ch)
     .set { proteins_ch }
 
     runInterproscan(proteins_ch)
 
-    if (params.cobs_index) {
-        Channel
-        .fromPath(params.cobs_index, checkIfExists: true)
-        .set { cobs_index_ch }
+    getITRs.out.is_tab_ch
+    .join(runInterproscan.out)
+    .join(getITRs.out.is_candidate_fasta_ch)
+    .set { is_annot_ch }
 
-        getITRs.out.is_fasta_for_cobs_ch
-        .combine(cobs_index_ch)
-        .set{ cobs_seq_ch }
-
-        searchCOBSIndex(cobs_seq_ch)
-        cobs_out_ch = searchCOBSIndex.out
-
-        getITRs.out.is_tab_ch
-        .join(cobs_out_ch)
-        .join(runInterproscan.out)
-        .join(getITRs.out.is_candidate_fasta_ch)
-        .set { is_annot_ch }
-
-        getISInfoWithCOBS(is_annot_ch)
-        is_info_ch = getISInfoWithCOBS.out.txt
-        is_fasta_ch = getISInfoWithCOBS.out.fasta
-
-    } else {
-        getITRs.out.is_tab_ch
-        .join(runInterproscan.out)
-        .join(getITRs.out.is_candidate_fasta_ch)
-        .set { is_annot_ch }
-
-        getISInfoWithoutCOBS(is_annot_ch)
-        is_info_ch = getISInfoWithoutCOBS.out.txt
-        is_fasta_ch = getISInfoWithoutCOBS.out.fasta
-    }
+    getISInfo(is_annot_ch)
+    is_info_ch = getISInfo.out.txt
+    is_fasta_ch = getISInfo.out.fasta
 
     emit:
     is_fasta_ch

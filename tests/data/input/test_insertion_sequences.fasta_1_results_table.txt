@@ -1,3 +1,0 @@
-query	sample_id	kmer_similarity
-IS_cluster_115105_length_655	SAMN07658209	1.0
-IS_cluster_2614_length_1455	SAMN07658618	1.0

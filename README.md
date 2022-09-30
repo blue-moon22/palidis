@@ -34,9 +34,7 @@ For each sample, the pipeline produces two output files: **1. FASTA file of inse
 4. Get candidate ITRs by distance filters [`getCandidateITRs`]
 5. Cluster candidate ITRs using CD-HIT-EST [`clusterReads`]
 6. Get putative ITRs by cluster concordance and output Insertion Sequences [`getITRs`]
-7. Find transposase [`runProdigal`] [`installInterproscan` `runInterproscan`]
-8. _Optional:_ Search against a COB index to predict IS origin [`searchCOBSIndex`]
-9. Combine insertion sequence information [`getISInfoWithCOBS` `getISInfoWithoutCOBS`]
+7. Get insertion sequences [`runProdigal`, `installInterproscan`, `runInterproscan`, `getISInfo`]
 
 <a name="installation"></a>
 ## Installation
@@ -58,23 +56,10 @@ git submodule update --init --recursive
 <a name="usage"></a>
 ## Usage
 
-### Without COBS Index Search
 ```bash
 nextflow palidis.nf --manifest <manifest_file> --batch_name <batch_name> -c configs/conf/<name_of_config>.config
 ```
 **If you are running this on an LSF scheduler, also include `--lsf true`.**
-
-### With COBS Index Search
-Download a COBS index database of all genomes. This is a very large file of just under 1 Terabyte so you will need a good internet connection and storage.
-```
-wget http://ftp.ebi.ac.uk/pub/databases/ENA2018-bacteria-661k/661k.cobs_compact
-```
-
-Run command with `--cobs_index` option
-```bash
-nextflow palidis.nf --manifest <manifest_file> --batch_name <batch_name> --cobs_index 661k.cobs_compact -c configs/conf/<name_of_config>.config
-```
-**If you are running this on an LSF schedular, also include `--lsf true`.**
 
 ### Mandatory arguments
 #### `<batch_name>`
@@ -94,7 +79,7 @@ lane4 | /path/to/file/lane4_1.fq.gz | /path/to/file/lane4_2.fq.gz | my_sample3 |
 
 #### `<name_of_config>`
 
-This represents the institution or HPC name. You can find your institutional HPC's config in `configs/conf` (which is linked to the configs directory in [nf-core](https://github.com/nf-core). For example, running on Sanger's HPC: `-c configs/conf/sanger.conf`
+This represents the institution or HPC name. You can find your institutional HPC's config in `configs/conf` (which is linked to the configs directory in [nf-core](https://github.com/nf-core). For example, running on Sanger's HPC: `-c configs/conf/sanger.config`
 
 ### Optional arguments
 ```
@@ -107,8 +92,6 @@ This represents the institution or HPC name. You can find your institutional HPC
   --cd_hit_aL         -aL option for CD-HIT-EST. (Default: 0.0)
   --cd_hit_aS         -aS option for CD-HIT-EST. (Default: 0.9)
   --cd_hit_c          -c option for CD-HIT-EST. (Default: 0.9)
-  --cobs_index        Location of COBS index file for optional COBS index search of predicted IS origin. (Default: "")
-  --cobs_threshold    K-mer threshold for identifying sequences in COBS index. (Default: 1)
   -resume             Resume the pipeline
 ```
 
@@ -126,23 +109,19 @@ There are two output files stored in a directory specified with `--batch_name`:
 
 **2. Information for each insertions sequence**
 
-e.g. (includes information from optional COB index search)
-
-IS_name | sample_id | contig | itr1_start_position | itr1_end_position | itr2_start_position | itr2_end_position | itr_cluster | COBS_index_biosample_id | COBS_index_origin
-:---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---:
-IS_name1 | sample_id1 | contig_name1 | 29 | 53 | 1004 | 1028 | 12 | SAMN00627906 | Bacteroides vulgatus CL09T03C04 |
-IS_name2 | sample_id1 | contig_name2 | 23 | 53 | 2769 | 2832 | 65 | | |
+IS_name | sample_id | contig | itr1_start_position | itr1_end_position | itr2_start_position | itr2_end_position | description
+:---: | :---: | :---: | :---: | :---: | :---: | :---: | :---:
+IS_length_655-IPR002686_154_418-IPR002686_148_565-IPR036515_124_667-IPR036515_124_580-PTHR36966_133_625 | SRS013170 | NODE_18_length_76504_cov_9.77495 | 74408 | 74436 | 75032 | 75062 | IPR002686:Transposase IS200-like;IPR036515:Transposase IS200-like superfamily;PTHR36966:REP-ASSOCIATED TYROSINE TRANSPOSASE
+IS_length_1455-IPR013762_1393_1918 | SRS013170 | NODE_31_length_64375_cov_7.58579 | 10034 | 10063 | 11459 | 11488 | IPR013762:Integrase-like, catalytic domain superfamily
 
 ### Interpretation
 Header | Description
 :--- | :---
-**IS_name** | Name assigned by PaliDIS which contains the ITR cluster (see below) and length e.g. `IS_cluster_0_length_1072`
+**IS_name** | Name assigned by PaliDIS which contains the length, interpro or PANTHER accessions of transposases and their positions, e.g. `IS_length_655-IPR002686_154_418-IPR002686_148_565-IPR036515_124_667-IPR036515_124_580-PTHR36966_133_625` represents an IS of nucleotide length 655 with transposases detected including Interpro accession IPR002686 in positions 154-418 and 148-565, Interpro accession IPR036515 in position 124-667 and PANTHER accession PTHR36966 in position 133-625)
 **sample_id** | Sample ID that was given in manifest
 **contig** | Name of the contig that was given by the header in the contig file provided by the manifest
-**itr1_start_position** | The position of the first nucleotide of the left-hand Inverted Terminal Repeat (ITR) sequence
-**itr1_end_position** | The position of the last nucleotide of the left-hand ITR sequence
-**itr2_start_position** | The position of the first nucleotide of the right-hand ITR sequence
-**itr2_end_position** | The position of the last nucleotide of the right-hand ITR sequence
-**itr_cluster** | The ITR cluster that was assigned to both ITRs (in Step 5)
-**COBS_index_biosample_id** | The NCBI Biosample ID of a sequenced sample in the COBS index
-**COBS_index_origin** | The taxonomy of the sequenced sample in the COBS index
+**itr1_start_position** | The position in the contig of the first nucleotide of the left-hand Inverted Terminal Repeat (ITR) sequence (also the start of the IS)
+**itr1_end_position** | The position in the contig of the last nucleotide of the left-hand ITR sequence
+**itr2_start_position** | The position in the contig of the first nucleotide of the right-hand ITR sequence
+**itr2_end_position** | The position of the last nucleotide of the right-hand ITR sequence (also the end of the IS)
+**description** | The description of each accession recorded in **IS_name**, e.g. IPR002686:Transposase IS200-like;IPR036515:Transposase IS200-like superfamily;PTHR36966:REP-ASSOCIATED TYROSINE TRANSPOSASE

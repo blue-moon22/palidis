@@ -1,42 +1,7 @@
 /*
  * Get IS Information
  */
-process getISInfoWithCOBS {
-
-    input:
-    tuple val(sample_id), path(is_tab_file), path(cobs_out), path(faa_file), path(tsv_file), path(fasta_file)
-
-    output:
-    path("${output_txt}"), emit: txt
-    path("${output_fasta}"), emit: fasta
-
-    script:
-    output_txt="${sample_id}_insertion_sequences_info.txt"
-    output_fasta="${sample_id}_insertion_sequences.fasta"
-    """
-    set +e
-
-    grep SAMN ${cobs_out} | cut -f2 | sort | uniq > SAMN_ids.txt
-    num_ids=\$(cat SAMN_ids.txt | wc -l)
-
-    for ((i=1;i<=\${num_ids};i++))
-    do
-        biosample_id=\$(sed -n "\${i}p" SAMN_ids.txt)
-        ffq \$biosample_id > \${biosample_id}.json
-    done
-
-    get_IS_info.py \
-        --tab_file ${is_tab_file} \
-        --cobs_search_out ${cobs_out} \
-        --ffq_json \$(pwd) \
-        --aa_fasta ${faa_file} \
-        --interproscan_out ${tsv_file} \
-        --fasta_file ${fasta_file} \
-        --output_prefix ${sample_id}
-    """
-}
-
-process getISInfoWithoutCOBS {
+process getISInfo {
 
     input:
     tuple val(sample_id), path(is_tab_file), path(faa_file), path(tsv_file), path(fasta_file)
