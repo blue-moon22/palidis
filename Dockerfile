@@ -39,8 +39,8 @@ ENV CLASSPATH=/usr/lib/jvm/java-11-openjdk-amd64/bin
 WORKDIR /opt
 
 # Install pal-MEM
-ARG PALMEM_VERSION=2.3.4
-RUN git clone --branch v${PALMEM_VERSION} https://github.com/blue-moon22/pal-MEM.git \
+ARG PALMEM_VERSION=v2.4.0
+RUN git clone --branch ${PALMEM_VERSION} https://github.com/blue-moon22/pal-MEM.git \
   && cd pal-MEM \
   && rm -rf .git \
   && mkdir build \
