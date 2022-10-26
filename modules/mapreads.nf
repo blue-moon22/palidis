@@ -1,7 +1,12 @@
 process mapReads {
 
 	input:
-	tuple val(sample_id), path(fasta1), path(fasta2), path(db_path), val(pair)
+	tuple val(sample_id), path(fastas1), path(fastas2), path(db_path), val(pair)
+	val c1
+	val c2
+
+	when:
+	c1 == c2
 
 	output:
 	tuple val(sample_id), path("${prefix}.sam.mapped.sorted")
@@ -9,8 +14,11 @@ process mapReads {
     script:
     prefix = "${sample_id}_itr_in_${pair}"
 	"""
+	cat ${fastas1} > ${sample_id}_1.fasta
+	cat ${fastas2} > ${sample_id}_2.fasta
+
     tar -xf ${db_path}
-	bowtie2 --very-sensitive-local -x ${sample_id}_contigs -1 ${fasta1} -2 ${fasta2} -S ${prefix}.sam -p ${task.cpus} -f
+	bowtie2 --very-sensitive-local -x ${sample_id}_contigs -1 ${sample_id}_1.fasta -2 ${sample_id}_2.fasta -S ${prefix}.sam -p ${task.cpus} -f
 	samtools view -S -b ${prefix}.sam -@ ${task.cpus} > ${prefix}.bam
 	rm ${prefix}.sam
 	samtools view -b -F 4 ${prefix}.bam -@ ${task.cpus} > ${prefix}.bam.mapped

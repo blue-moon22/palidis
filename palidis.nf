@@ -29,50 +29,51 @@ workflow palidis {
     contig_file_ch
 
     main:
+    filterContigs(contig_file_ch)
+    buildDB(filterContigs.out)
+
     convertToFasta(read_pair_ch)
 
-    palmem(convertToFasta.out)
+    convertToFasta.out.fasta_ch
+    .transpose()
+    .set{ fasta_ch }
 
-    filterContigs(contig_file_ch)
+    palmem(fasta_ch)
 
-    buildDB(filterContigs.out)
+    palmem.out.ir_1_ch
+    .groupTuple()
+    .join(buildDB.out.contig_db1_ch)
+    .combine(Channel.of('1'))
+    .set { contigs_reads1_ch }
+
+    palmem.out.ir_2_ch
+    .groupTuple()
+    .join(buildDB.out.contig_db2_ch)
+    .combine(Channel.of('2'))
+    .set { contigs_reads2_ch }
 
     /*
      * Map reads to contigs
      */
-    Channel
-    .of('1')
-    .set { pair1_ch }
 
-    palmem.out.ir_1_ch
-    .join(buildDB.out.contig_db1_ch)
-    .combine(pair1_ch)
-    .set { contigs_reads1_ch }
-
-    mapReads1(contigs_reads1_ch)
-
-    Channel
-    .of('2')
-    .set { pair2_ch }
-
-    palmem.out.ir_2_ch
-    .join(buildDB.out.contig_db2_ch)
-    .combine(pair2_ch)
-    .set { contigs_reads2_ch }
-
-    mapReads2(contigs_reads2_ch)
+    mapReads1(contigs_reads1_ch, palmem.out.ir_1_ch.count(), fasta_ch.count())
+    mapReads2(contigs_reads2_ch, palmem.out.ir_2_ch.count(), fasta_ch.count())
 
     /*
      * Get contigs and reads with candidate ITRs
      */
-     contig_file_ch
-     .join(mapReads1.out)
-     .join(mapReads2.out)
-     .join(convertToFasta.out)
-     .join(palmem.out.tab_ch)
-     .set { mapping_contigs_ch }
+    palmem.out.tab_ch
+    .groupTuple()
+    .set { all_tab_ch }
 
-    getCandidateITRs(mapping_contigs_ch)
+    contig_file_ch
+    .join(mapReads1.out)
+    .join(mapReads2.out)
+    .join(convertToFasta.out.fasta_for_itr_ch)
+    .join(all_tab_ch)
+    .set { mapping_contigs_ch }
+
+    getCandidateITRs(mapping_contigs_ch, palmem.out.tab_ch.count(), fasta_ch.count())
 
     clusterReads(getCandidateITRs.out.reads_itrs_ch)
     cluster_ch = clusterReads.out.cluster_ch
