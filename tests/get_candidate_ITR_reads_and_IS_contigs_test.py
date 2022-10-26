@@ -5,8 +5,6 @@ from unittest.mock import patch, call, ANY
 from bin.get_candidate_ITR_reads_and_IS_contigs import *
 
 class TestCandidateITRReadsAndISContigs(unittest.TestCase):
-    TEST_SAM_FILE1 = 'tests/data/input/test1.sam.mapped.sorted'
-    TEST_SAM_FILE2 = 'tests/data/input/test2.sam.mapped.sorted'
     TEST_SAM_FILE_IN_1 = 'tests/data/input/test_itr_in_1.sam.mapped.sorted'
     TEST_SAM_FILE_IN_2 = 'tests/data/input/test_itr_in_2.sam.mapped.sorted'
     TEST_FASTA1 = 'tests/data/input/reference_IR_1.fasta'
@@ -49,18 +47,18 @@ class TestCandidateITRReadsAndISContigs(unittest.TestCase):
         self.maxDiff = None
         self.assertEqual(actual, {
             'NODE_10183_length_410_cov_29.9493': {
-                'Seq4_nstart_SRS011144_nend_SRR062032.2555.1_f1': [(100, 126), True]
+                'Seq4_nstart_SRS011144_nend_SRR062032.2555.1_f1_LCoord_30_RCoord_60': [(100, 126), True]
             },
             'NODE_41901_length_110_cov_74.5455': {
-                'Seq1477271_nstart_SRS011144_nend_SRR062031.31036872.2_f2': [(7, 83), False]
+                'Seq1477271_nstart_SRS011144_nend_SRR062031.31036872.2_f2_LCoord_30_RCoord_60': [(7, 83), False]
             },
             'NODE_823_length_1805_cov_1014.02': {
-                'Seq134_nstart_SRS011144_nend_SRR062032.12043.1_f1': [(246, 271), True],
-                'Seq687973_nstart_SRS011144_nend_SRR062032.29886260.1_f1': [(743, 771), True],
-                'Seq1519667_nstart_SRS011144_nend_SRR062031.33018371.2_f2': [(251, 277), True]
+                'Seq134_nstart_SRS011144_nend_SRR062032.12043.1_f1_LCoord_30_RCoord_60': [(246, 271), True],
+                'Seq687973_nstart_SRS011144_nend_SRR062032.29886260.1_f1_LCoord_30_RCoord_60': [(743, 771), True],
+                'Seq1519667_nstart_SRS011144_nend_SRR062031.33018371.2_f2_LCoord_30_RCoord_60': [(251, 277), True]
             },
             'NODE_41829_length_121_cov_87.6667': {
-                'Seq1476536_nstart_SRS011144_nend_SRR062031.31005955.1_f1': [(43, 131), False]
+                'Seq1476536_nstart_SRS011144_nend_SRR062031.31005955.1_f1_LCoord_30_RCoord_60': [(43, 131), False]
             }
         })
 
