@@ -94,11 +94,6 @@ workflow palidis {
         db_path.mkdir()
 
         installInterproscan.out
-        .subscribe { it ->
-            it.moveTo("${db_path}")
-        }
-        Channel
-        .fromPath(file("${params.db_path}/${params.interproscan_db}"))
         .set { interproscan_ch }
     } else {
         Channel
