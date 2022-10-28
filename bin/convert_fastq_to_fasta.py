@@ -20,16 +20,18 @@ def write_fasta(fastq_file, read):
     find = "_" + str(read)
     sample_name = reversed.replace(find[::-1], "", 1)[::-1]
     fasta_file = sample_name + "_" + str(read) + ".fasta"
+    count = 1
     index = 1
     with open(fasta_file, "w") as out:
         with open(fastq_file, "r") as fastq:
             for line in fastq:
-                if (index - 1) % 4 == 0:
-                    new_id = ">Seq" + str(index) + "_nstart_" + sample_name + "_nend_" + line.replace('\n', "").replace(" ", "_") + "_f" + str(read)
+                if (count - 1) % 4 == 0:
+                    new_id = ">Seq" + str(index) + "_f" + str(read)
                     out.write(new_id + "\n")
-                elif (index - 1) % 4 == 1:
+                    index += 1
+                elif (count - 1) % 4 == 1:
                     out.write(line)
-                index += 1
+                count += 1
 
 
 def get_arguments():
