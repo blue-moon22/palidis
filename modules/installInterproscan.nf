@@ -7,7 +7,7 @@ process installInterproscan {
 
 
     output:
-    path "${db_path}/${interproscan_db}"
+    path "${interproscan_db}"
 
     script:
     interproscan_link=params.interproscan_link
@@ -31,6 +31,6 @@ process installInterproscan {
     python3 initial_setup.py
     cd ..
 
-    mv ${interproscan_db} ${db_path}/
+    mkdir ${interproscan_db}
     """
 }

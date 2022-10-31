@@ -189,7 +189,7 @@ def process_sam_file(ir_positions_dict, sam_file, read_order, alloc_array):
             current_contig = line.split("\t")[2]
             sam_flag = int(line.split('\t')[1])
             ir_paired_read = line.split("\t")[0]
-            read_pair_id = ir_paired_read.split("_LCoord")[0][-3:]
+            read_pair_id = ir_paired_read[-3:]
             ir_position = 0
             index = int(ir_paired_read.split("_")[0].replace("Seq", ""))
             read_position = int(line.split("\t")[3])

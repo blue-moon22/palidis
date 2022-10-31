@@ -33,7 +33,6 @@ def write_info(tab_file, prodigal_info, interpro_info, output_prefix):
                     for protein in proteins:
                         if protein in interpro_info:
                             for acc, items in interpro_info[protein].items():
-                                print(items)
                                 for item in items:
                                     length = is_name.split('_')[4]
                                     transposase = item[0]
@@ -41,16 +40,18 @@ def write_info(tab_file, prodigal_info, interpro_info, output_prefix):
                                     start = str((protein_start - 1) + item[1][0])
                                     end = str((protein_start - 1) + item[1][1])
                                     if flag:
-                                        new_is_name += f'-{acc}_{start}_{end}'
+                                        new_is_name.append(f'{acc}_{start}_{end}')
                                     else:
-                                        new_is_name = f'IS_length_{length}-{acc}_{start}_{end}'
+                                        new_is_name = [f'IS_length_{length}']
+                                        new_is_name.append(f'{acc}_{start}_{end}')
                                         flag = 1
                                     transposases.append(f'{acc}:{transposase}')
 
                     if flag:
-                        out.write(f'{new_is_name}\t')
+                        new_is_name = new_is_name[0] + '-' + '-'.join(sorted(list(set(new_is_name[1:]))))
+                        out.write(new_is_name)
                         is_name_dict[is_name] = new_is_name
-                        out.write('\t'.join(line.replace('\n', '').split('\t')[1:-1]) + '\t' + ';'.join(sorted(list(set(transposases)))) + '\n')
+                        out.write('\t' + '\t'.join(line.replace('\n', '').split('\t')[1:-1]) + '\t' + ';'.join(sorted(list(set(transposases)))) + '\n')
 
     return is_name_dict
 

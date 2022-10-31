@@ -13,6 +13,7 @@ process convertToFasta {
     script:
     fastq1 = "${sample_id}_1.fastq"
     fastq2 = "${sample_id}_2.fastq"
+    chunk_size=params.chunk_size
 
 	"""
     for file in ${read1}
@@ -25,12 +26,16 @@ process convertToFasta {
         gunzip -c \$file >> ${fastq2}
     done
 
-    convert_fastq_to_fasta.py -f ${fastq1} -r 1
-    convert_fastq_to_fasta.py -f ${fastq2} -r 2
+    sed -n '1~4s/^@/>/p;2~4p' ${sample_id}_1.fastq > ${sample_id}_1.fa
+    sed -n '1~4s/^@/>/p;2~4p' ${sample_id}_2.fastq > ${sample_id}_2.fa
+
+    modify_headers.py -f ${sample_id}_1.fa -r 1
+    modify_headers.py -f ${sample_id}_2.fa -r 2
     cat ${sample_id}_*.fasta > ${sample_id}.fasta
-    split -l 2000000 ${sample_id}.fasta chunk
+    split -l ${chunk_size} ${sample_id}.fasta chunk
 
     rm ${sample_id}.fasta
+    rm ${sample_id}_1.fa ${sample_id}_2.fa
     rm ${fastq1} ${fastq2}
     """
 }

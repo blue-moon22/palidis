@@ -14,8 +14,10 @@ process mapReads {
     script:
     prefix = "${sample_id}_itr_in_${pair}"
 	"""
-	cat ${fastas1} > ${sample_id}_1.fasta
-	cat ${fastas2} > ${sample_id}_2.fasta
+	cat ${fastas1} > tmp_1.fasta
+	sed -e '/^>/s/\$/@/' -e 's/^>/#/' tmp_1.fasta | tr -d '\n' | tr "#" "\n" | tr "@" "\t" | sort | uniq | sed -e 's/^/>/' -e 's/\\t/\\n/' | sed '1d' > ${sample_id}_1.fasta
+	cat ${fastas2} > tmp_2.fasta
+	sed -e '/^>/s/\$/@/' -e 's/^>/#/' tmp_2.fasta | tr -d '\n' | tr "#" "\n" | tr "@" "\t" | sort | uniq | sed -e 's/^/>/' -e 's/\\t/\\n/' | sed '1d' > ${sample_id}_2.fasta
 
     tar -xf ${db_path}
 	bowtie2 --very-sensitive-local -x ${sample_id}_contigs -1 ${sample_id}_1.fasta -2 ${sample_id}_2.fasta -S ${prefix}.sam -p ${task.cpus} -f
