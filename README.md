@@ -59,7 +59,6 @@ git submodule update --init --recursive
 ```bash
 nextflow palidis.nf --manifest <manifest_file> --batch_name <batch_name> -c configs/conf/<name_of_config>.config
 ```
-**If you are running this on an LSF scheduler, also include `--lsf true`.**
 
 ### Mandatory arguments
 #### `<batch_name>`
@@ -79,7 +78,7 @@ lane4 | /path/to/file/lane4_1.fq.gz | /path/to/file/lane4_2.fq.gz | my_sample3 |
 
 #### `<name_of_config>`
 
-This represents the institution or HPC name. You can find your institutional HPC's config in `configs/conf` (which is linked to the configs directory in [nf-core](https://github.com/nf-core). For example, running on Sanger's HPC: `-c configs/conf/sanger.config`
+This represents the institution or HPC name. You can find your institutional HPC's config in `configs/conf` (which is linked to the configs directory in [nf-core](https://github.com/nf-core)). For example, running on Sanger's HPC: `-c configs/conf/sanger.config`
 
 ### Optional arguments
 ```
