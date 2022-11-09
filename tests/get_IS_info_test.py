@@ -36,9 +36,9 @@ class TestGetISInfo(unittest.TestCase):
         actual = "".join(tab.readlines())
         #os.remove(tab_name)
         self.maxDiff = None
-        self.assertEqual(actual, """IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\tdescription\nIS_length_655-IPR002686_154_418-IPR002686_148_565-IPR036515_124_667-IPR036515_124_580-PTHR36966_133_625\tSRS013170\tNODE_18_length_76504_cov_9.77495\t74408\t74436\t75032\t75062\tIPR002686:Transposase IS200-like;IPR036515:Transposase IS200-like superfamily;PTHR36966:REP-ASSOCIATED TYROSINE TRANSPOSASE\nIS_length_1455-IPR013762_1393_1918\tSRS013170\tNODE_31_length_64375_cov_7.58579\t10034\t10063\t11459\t11488\tIPR013762:Integrase-like, catalytic domain superfamily\n""")
+        self.assertEqual(actual, """IS_name\tsample_id\tcontig\titr1_start_position\titr1_end_position\titr2_start_position\titr2_end_position\tdescription\nIS_length_655-IPR002686_148_565-IPR002686_154_418-IPR036515_124_580-IPR036515_124_667-PTHR36966_133_625\tSRS013170\tNODE_18_length_76504_cov_9.77495\t74408\t74436\t75032\t75062\tIPR002686:Transposase IS200-like;IPR036515:Transposase IS200-like superfamily;PTHR36966:REP-ASSOCIATED TYROSINE TRANSPOSASE\nIS_length_1455-IPR013762_1393_1918\tSRS013170\tNODE_31_length_64375_cov_7.58579\t10034\t10063\t11459\t11488\tIPR013762:Integrase-like, catalytic domain superfamily\n""")
 
-        self.assertEqual(output, {'IS_cluster_115105_length_655': 'IS_length_655-IPR002686_154_418-IPR002686_148_565-IPR036515_124_667-IPR036515_124_580-PTHR36966_133_625', 'IS_cluster_2614_length_1455': 'IS_length_1455-IPR013762_1393_1918'})
+        self.assertEqual(output, {'IS_cluster_115105_length_655': 'IS_length_655-IPR002686_148_565-IPR002686_154_418-IPR036515_124_580-IPR036515_124_667-PTHR36966_133_625', 'IS_cluster_2614_length_1455': 'IS_length_1455-IPR013762_1393_1918'})
 
     def test_arguments(self):
         actual = get_arguments().parse_args(
