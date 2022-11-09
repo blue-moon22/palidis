@@ -45,13 +45,8 @@ For each sample, the pipeline produces two output files: **1. FASTA file of inse
 git clone --recursive -j8 https://github.com/blue-moon22/palidis.git
 cd palidis
 ```
-_Note: You may be warned to first call `git config --global --add safe.directory`._
-
-    If you have already cloned this repo with `git clone https://github.com/blue-moon22/palidis.git`, you also need to get the submodules:
-```bash
-cd palidis
-git submodule update --init --recursive
-```
+Note: You may be warned to first call `git config --global --add safe.directory`.
+</br>If you have already cloned this repo with `git clone https://github.com/blue-moon22/palidis.git`, you also need to get the submodules `git submodule update --init --recursive`
 
 <a name="usage"></a>
 ## Usage
