@@ -1,3 +1,5 @@
+# PaliDIS is retired, please refer to [PaliDIS4](https://github.com/blue-moon22/palidis4)
+
 
 [![DOI](https://zenodo.org/badge/293755884.svg)](https://zenodo.org/badge/latestdoi/293755884)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/blue-moon22/palidis)](https://github.com/blue-moon22/palidis/releases)
